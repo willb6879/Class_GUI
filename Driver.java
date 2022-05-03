@@ -25,8 +25,8 @@ public class Driver {
      */
     void run() {
     try{
-        // 1. Connection to database (DriverManager static function establishes connection)
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "AdmPas!!!04292021"); // AT SOME POINT THIS SHOULD NOT BE HARDCODED!!!
+        // Connection to database (DriverManager static function establishes connection)
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "AdmPas!!!04292021");
         statement = con.createStatement(); // statement object is created SO THAT sql statements can be sent to the database (messenger)
             while (true) {
                 printMenu(); // prints out menu for user
