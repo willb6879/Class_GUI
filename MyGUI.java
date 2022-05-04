@@ -75,7 +75,12 @@ public class MyGUI extends JFrame implements ActionListener {
                     txtOutput.setText("Please enter all values in boxes above...");
                     // display in area box invalid input
                 }else{
-                    driver.sqlInsert( txtClassName.getText(), txtTeacherFirstName.getText(), txtTeacherLastName.getText(), Integer.parseInt(txtCredits.getText()) );
+                    if( !driver.sqlInsert( txtClassName.getText(), txtTeacherFirstName.getText(), txtTeacherLastName.getText(),
+                            Integer.parseInt(txtCredits.getText()) ) ){
+                        txtOutput.setText("Unsuccessful!");
+                    }else{
+
+                    }
                 }
             }catch( NumberFormatException ex ){
                 txtOutput.setText("Please enter an integer for credits...");

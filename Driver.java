@@ -91,28 +91,20 @@ public class Driver {
      */
     boolean sqlInsert( String class_name, String first, String last, int credits ) {
         try{
-            /*System.out.println("Enter database: "); // user inputs info for sql query
-            db = sc.nextLine();
-            System.out.println("Enter table: ");
-            table = sc.nextLine();*/
-
-            // print out the column labels for user ... then prompt to insert what
-            if(statement.execute("INSERT INTO school.classes ("))
-            num_columns = rs.getMetaData();
-            /*for (int c = 1; c <= num_columns.getColumnCount(); c++) { // prints columns of table out for user
-                if( c == num_columns.getColumnCount() ){
-                    System.out.println( num_columns.getColumnName( c ) );
-                }else{
-                    System.out.print( num_columns.getColumnName( c )  + " | ");
-                }
-            }*/
-
-            // user enters SQL command
+            // executes insert statement
+            rs = statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" +
+                    class_name + "', '" +
+                    last + ", " + first + "', '" +
+                    credits + ")" );
+            if( !statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" +
+                class_name + "', '" +
+                last + ", " + first + "', '" +
+                credits + ")" )){
+                return false;
+            }
         } catch( SQLException e ){
-            System.out.println("Invalid query input!");
             return false;
         } catch( Exception e ){
-            System.out.println("Unexpected error occurred!");
             return false;
         }
         return true;
