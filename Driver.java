@@ -6,11 +6,6 @@ public class Driver {
     ResultSet rs = null;
     ResultSetMetaData rsmd;
     Statement statement = null;
-    String db;
-    String table;
-    String sBuffer[];
-    String column = "";
-    ArrayList o = null;
 
     Driver(){
         // intentionally empty
@@ -24,8 +19,10 @@ public class Driver {
         // Connection to database (DriverManager static function establishes connection)
         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "AdmPas!!!04292021");
         statement = con.createStatement(); // statement object is created SO THAT sql statements can be sent to the database (messenger)
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("SQL database connection could not be made. Please try again...");
+        } catch (Exception e){
+        System.out.println("Unexpected error occurred!");
         }
     }
 
@@ -39,20 +36,23 @@ public class Driver {
 
     /**
      * Performs an SQL Insert statement
-     * @return true if successful statement, false if unsuccessful
+     * @return true -1 if Class is already in database, 0 if , 1 if insert statement is successful
      */
-    boolean sqlInsert( String class_name, String first, String last, int credits ) {
+    int sqlInsert( String class_name, String first, String last, int credits ) {
         try{
             // executes insert statement
-            if( statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + class_name + "', '" + last + ", " + first + "', " +
+            if( !statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + class_name + "', '" + last + ", " + first + "', " +
                 credits + ")" )){
-                return false;
+                return 0;
             }
+        } catch( SQLIntegrityConstraintViolationException e ){
+            return -1;
         } catch( SQLException e ){
             e.printStackTrace();
-            return false;
+            System.out.println("Unexpected Error Occurred!");
+            return 0;
         }
-        return true;
+        return 1;
     }
 
     /**

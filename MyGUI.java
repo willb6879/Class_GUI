@@ -1,5 +1,4 @@
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,9 +28,10 @@ public class MyGUI extends JFrame implements ActionListener {
     private JTextArea txtMenu = new JTextArea(8, 28 );
     private JTextArea txtOutput = new JTextArea(5, 28);
     private JScrollPane outputScrollPane = new JScrollPane( txtOutput );
-    private String userMenu = "1. To get the info of a class, type in the class's name in\n the text box named 'Class', then press 'Get Class'\n\n" +
+    private String userMenu = "1. To get the info of a class, enter the class's name\n in the text box labeled 'Class', then press 'Get Class'\n\n" +
             "2. To add a class, fill in all text boxes with the class's info\n then press 'Add Class'\n\n" +
-            "3. To change the info of a class, ";
+            "3. To change the info of a class, enter the class's name\n in the text box labeled 'Class', then enter the information\n you wish to change in the text box(es)\n\n" +
+            "NOTE: All entries are case-sensitive";
 
     MyGUI() {
         // Sets up textArea, txtMenu, scrollBar, scrollPane and buttons
@@ -102,10 +102,19 @@ public class MyGUI extends JFrame implements ActionListener {
                 if( className.isEmpty() || fn.isEmpty() || ln.isEmpty() || credits.isEmpty() ){ // user doesn't put in values or doesn't put in an integer in "credits" box
                     txtOutput.setText("Please enter all values in boxes above...");
                 }else{
-                    if( !driver.sqlInsert( className, fn, ln, Integer.parseInt(credits)) ){
-                        txtOutput.setText("Unsuccessful!");
-                    }else{
-                        txtOutput.setText( String.format("Class %s taught by %s %s with %d credits was successfully added to the database!", className, fn, ln, Integer.parseInt(credits)) );
+                    int insert_result = driver.sqlInsert( className, fn, ln, Integer.parseInt(credits));
+                    switch( insert_result ){
+                        case -1:
+                            txtOutput.setText( String.format("Class '%s' is already in database...", className ));
+                            break;
+                        case 0:
+                            txtOutput.setText("Unexpected error occurred!");
+                            break;
+                        case 1:
+                            txtOutput.setText( String.format("Class %s taught by %s %s with %d credits was successfully added to the database!", className, fn, ln, Integer.parseInt(credits)) );
+                            break;
+                        default:
+                            // will NOT execute because of lines before it
                     }
                 }
             }catch( NumberFormatException ex ){
