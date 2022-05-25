@@ -1,15 +1,11 @@
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+
 
 public class Driver {
     ResultSet rs = null;
-    ResultSetMetaData num_columns;
+    ResultSetMetaData rsmd;
     Statement statement = null;
-    Scanner sc = new Scanner(System.in);
-    int user_input = -1;
-    boolean flag; // used for non-integer user inputs during after printMenu() call
     String db;
     String table;
     String sBuffer[];
@@ -28,50 +24,6 @@ public class Driver {
         // Connection to database (DriverManager static function establishes connection)
         Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "AdmPas!!!04292021");
         statement = con.createStatement(); // statement object is created SO THAT sql statements can be sent to the database (messenger)
-            /*while (true) {
-                printMenu(); // prints out menu for user
-                try {
-                    user_input = sc.nextInt(); // user inputs desired action
-                    sc.nextLine(); // clears Scanner buffer
-
-                } catch( InputMismatchException e ){
-                    sc.nextLine(); // clears Scanner buffer
-                    System.out.println("Please enter a valid integer...");
-                    continue;
-                } catch( Exception e ){
-                    System.out.println("Unexpected error occurred...");
-                    continue;
-                }
-                // 3. execute query based on user input
-                switch (user_input) {
-                    case 1:
-                        if (sqlSelect()) {
-                            System.out.println("Successful!");
-                        } else {
-                            System.out.println("Unsuccessful!");
-                        }
-                        break;
-                    case 2:
-                        if (sqlInsert()) {
-                            System.out.println("Successful!");
-                        } else {
-                            System.out.println("Unsuccessful!");
-                        }
-                        break;
-                    case 3:
-                        if (sqlAlter()) {
-                            System.out.println("Successful!");
-                        } else {
-                            System.out.println("Unsuccessful!");
-                        }
-                        break;
-                    default:
-                        System.out.println("Please enter a valid integer...");
-                        continue;
-                }
-            }
-            */
-
         } catch (Exception e) {
             System.out.println("SQL database connection could not be made. Please try again...");
         }
@@ -92,19 +44,12 @@ public class Driver {
     boolean sqlInsert( String class_name, String first, String last, int credits ) {
         try{
             // executes insert statement
-            rs = statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" +
-                    class_name + "', '" +
-                    last + ", " + first + "', '" +
-                    credits + ")" );
-            if( !statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" +
-                class_name + "', '" +
-                last + ", " + first + "', '" +
+            if( statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + class_name + "', '" + last + ", " + first + "', " +
                 credits + ")" )){
                 return false;
             }
         } catch( SQLException e ){
-            return false;
-        } catch( Exception e ){
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -112,56 +57,34 @@ public class Driver {
 
     /**
      * Performs an SQL select statement and prints values to the user
-     * @return true if successful SQL query, false if unsuccessful
+     * @return the String of data retrieved from a class, null if the class doesn't exist or error occurs
      */
-    private boolean sqlSelect() {
+    ArrayList<String> sqlSelect( String class_name ) {
+        ArrayList<String> class_info = null;
         try{
-            System.out.println("Enter database: "); // user inputs info for SQL query
-            db = sc.nextLine();
-            System.out.println("Enter table: ");
-            table = sc.nextLine();
-            System.out.println("Enter column(s): <column1> <column2> ... <columnN> OR <enter> for all columns in table ");
-            column = sc.nextLine();
-
-            sBuffer = column.split(" "); // sBuffer splits the user input into an array of columns to be selected
-            column = String.join(", ", sBuffer); // column is now the correct format for SQL with ", " character
-
-            if( column.isEmpty() ) { // user selects all columns for query
-                rs = statement.executeQuery("SELECT * FROM " + db + "." + table );
-                num_columns = rs.getMetaData(); // returns integer representing number of columns in the current ResultSet object
-                while( rs.next() ){
-                    for( int i = 1; i <= num_columns.getColumnCount(); i++ ){
-                        if( i == num_columns.getColumnCount() ){
-                            System.out.println( String.format("%2s ", rs.getString( i ) ));
-                        }else{
-                            System.out.print( String.format("%2s | ", rs.getString( i ) ));
-                        }
-                    }
-                }
-            }else{ // user specifies columns for query
-                rs = statement.executeQuery("SELECT " + column + " FROM " + db + "." + table );
-                while( rs.next() ){
-                    for( int i = 0; i < sBuffer.length; i++ ){
-                        System.out.print( String.format("%2s ", rs.getString( sBuffer[i] ) )); // prints out each column of current row in query
-                    }
-                    System.out.println(); // skips line and proceeds to next row in database
+            rs = statement.executeQuery("SELECT * FROM school.classes WHERE class_name = '" + class_name + "'" ); // holds row info from query
+            rsmd = rs.getMetaData();
+            int num_columns = rsmd.getColumnCount();
+            class_info = new ArrayList( num_columns );
+            while( rs.next() ){
+                String column_info = null;
+                for( int col = 1; col <= num_columns; col++ ){
+                    column_info = rs.getString(col);
+                    class_info.add(col-1, column_info ); // adds current column resultSet metadata to class_info
                 }
             }
+            if( class_info.size() == 0 ){ // class not found in database, null is returned
+                return null;
+            }
+            return class_info; // class was found in database, arraylist of data is returned
         }catch( SQLException e ) {
-            System.out.println("Invalid query input!");
-            return false;
-        }catch( Exception e){
+            e.printStackTrace();
+            System.out.println("SQL Exception!");
+            return null;
+        }catch( Exception e ){
             System.out.println("Unexpected error occurred!");
-            return false;
+            return null;
         }
-        return true;
-    }
 
-    private void printMenu(){
-        System.out.println("1. SELECT\n2. INSERT\n3. ALTER");
-    }
-
-    private String[] spacedInput(){
-        return null;
     }
 }
