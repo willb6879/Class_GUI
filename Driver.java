@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Driver {
@@ -40,11 +41,25 @@ public class Driver {
      */
     int sqlInsert( String class_name, String first, String last, int credits ) {
         try{
-            // executes insert statement
-            if( !statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + class_name + "', '" + last + ", " + first + "', " +
-                credits + ")" )){
-                return 0;
+            StringBuffer cn = new StringBuffer(class_name); // converts String to StringBuffer
+            StringBuffer fn = new StringBuffer(first);
+            StringBuffer ln = new StringBuffer(last);
+            // determines if class_name, first name or last name has a ' character in it (will cause error if not checked)
+            ArrayList<StringBuffer> text_values = new ArrayList<>(Arrays.asList(cn, fn, ln));
+            for( int i = 0; i < 3; i++ ){
+                StringBuffer cur_text_val = text_values.get(i);
+                int text_len = cur_text_val.length();
+                for( int ch = 0; ch < text_len; ch++ ){
+                    if( cur_text_val.charAt( ch ) == 39 ) { // ascii code for '
+                        cur_text_val.insert(i, "'");
+                        ch++;
+                        System.out.println(cur_text_val);
+                    }
+                }
             }
+            // executes insert statement
+            statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + cn + "', '" + ln + ", " + fn + "', " +
+                credits + ")" );
         } catch( SQLIntegrityConstraintViolationException e ){
             return -1;
         } catch( SQLException e ){

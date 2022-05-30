@@ -6,9 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Array;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MyGUI extends JFrame implements ActionListener {
     Driver driver = new Driver();
@@ -34,6 +32,16 @@ public class MyGUI extends JFrame implements ActionListener {
             "NOTE: All entries are case-sensitive";
 
     MyGUI() {
+        // font is set and text fonts are set
+        try {
+            Font roboto = Font.createFont(Font.TRUETYPE_FONT, new File("C:\\Users\\boruc\\OneDrive\\Desktop\\Roboto-Black.ttf"));
+            btnAddClass.setFont(new Font("Sans Serif", Font.BOLD, 12));
+            btnGetClass.setFont(new Font("Dialog", Font.BOLD, 12));
+
+
+        } catch( IOException | FontFormatException e){
+            e.printStackTrace();
+        }
         // Sets up textArea, txtMenu, scrollBar, scrollPane and buttons
         txtMenu.setText( userMenu );
         txtMenu.setEditable(false);
