@@ -106,7 +106,7 @@ public class Driver {
 
     boolean sqlDelete( String class_name ){
         try{
-            statement.executeUpdate("DELETE FROM school.classes WHERE class_name = " + class_name );
+            statement.executeUpdate("DELETE FROM school.classes WHERE class_name = '" + class_name + "'" );
             return true;
         }catch(SQLException e){
             e.printStackTrace();

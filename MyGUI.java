@@ -15,6 +15,7 @@ public class MyGUI extends JFrame implements ActionListener {
     private JButton btnGetClass = new JButton("Get Class");
     private JButton btnAddClass = new JButton("Add Class");
     private JButton btnChangeClass = new JButton("Update Class");
+    private JButton btnDeleteClass = new JButton("Delete Class");
     private JLabel lblClassName = new JLabel("Class:");
     private JLabel lblTeacherFirstName = new JLabel("Teacher FN:");
     private JLabel lblTeacherLastName = new JLabel("Teacher LN:");
@@ -52,6 +53,7 @@ public class MyGUI extends JFrame implements ActionListener {
         btnGetClass.addActionListener(this);
         btnAddClass.addActionListener(this);
         btnChangeClass.addActionListener(this);
+        btnDeleteClass.addActionListener(this);
 
         // Sets up JPanel
         panel.setLayout(new MigLayout());
@@ -66,7 +68,8 @@ public class MyGUI extends JFrame implements ActionListener {
 
         panel.add(btnGetClass, "skip, split3"); // added buttons
         panel.add(btnAddClass);
-        panel.add(btnChangeClass, "wrap");
+        panel.add(btnChangeClass);
+        panel.add(btnDeleteClass);
         panel.add(txtMenu, "cell 1 6");
         panel.add(outputScrollPane, "cell 1 7");
 
@@ -132,6 +135,16 @@ public class MyGUI extends JFrame implements ActionListener {
             }
         }else if( e.getSource() == btnChangeClass ){
 
+        }else if( e.getSource() == btnDeleteClass ){
+            if( className.isEmpty() ){
+                txtOutput.setText("Please enter all values in boxes above...");
+            }else{
+                if( !driver.sqlDelete( className ) ){
+                    txtOutput.setText("Please enter a class already in the database...");
+                }else{
+                    txtOutput.setText(String.format("Class '%s' was successfully deleted", className));
+                }
+            }
         }
     }
 
