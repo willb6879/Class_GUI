@@ -18,7 +18,7 @@ public class Driver {
     void run() {
     try{
         // Connection to database (DriverManager static function establishes connection)
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "AdmPas!!!04292021");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root", "root", "MyNewPass");
         statement = con.createStatement(); // statement object is created SO THAT sql statements can be sent to the database (messenger)
         } catch (SQLException e) {
             System.out.println("SQL database connection could not be made. Please try again...");
@@ -44,6 +44,7 @@ public class Driver {
             StringBuffer cn = new StringBuffer(class_name); // converts String to StringBuffer
             StringBuffer fn = new StringBuffer(first);
             StringBuffer ln = new StringBuffer(last);
+
             // determines if class_name, first name or last name has a ' character in it (will cause error if not checked)
             ArrayList<StringBuffer> text_values = new ArrayList<>(Arrays.asList(cn, fn, ln));
             for( int i = 0; i < 3; i++ ){
@@ -51,14 +52,14 @@ public class Driver {
                 int text_len = cur_text_val.length();
                 for( int ch = 0; ch < text_len; ch++ ){
                     if( cur_text_val.charAt( ch ) == 39 ) { // ascii code for '
-                        cur_text_val.insert(i, "'");
+                        cur_text_val.insert(ch, "'");
                         ch++;
                         System.out.println(cur_text_val);
                     }
                 }
             }
             // executes insert statement
-            statement.execute("INSERT INTO school.classes (class_name, teacher, credits) VALUES('" + cn + "', '" + ln + ", " + fn + "', " +
+            statement.execute("INSERT INTO school.classes (class_name, teacher_name, credits) VALUES('" + cn + "', '" + ln + ", " + fn + "', " +
                 credits + ")" );
         } catch( SQLIntegrityConstraintViolationException e ){
             return -1;
@@ -101,5 +102,18 @@ public class Driver {
             return null;
         }
 
+    }
+
+    boolean sqlDelete( String class_name ){
+        try{
+            statement.executeUpdate("DELETE FROM school.classes WHERE class_name = " + class_name );
+            return true;
+        }catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }catch(Exception e){
+            System.out.println("Unexpected error occurred!");
+            return false;
+        }
     }
 }

@@ -14,7 +14,7 @@ public class MyGUI extends JFrame implements ActionListener {
     private JPanel panel = new JPanel();
     private JButton btnGetClass = new JButton("Get Class");
     private JButton btnAddClass = new JButton("Add Class");
-    private JButton btnChangeClass = new JButton("Change Class");
+    private JButton btnChangeClass = new JButton("Update Class");
     private JLabel lblClassName = new JLabel("Class:");
     private JLabel lblTeacherFirstName = new JLabel("Teacher FN:");
     private JLabel lblTeacherLastName = new JLabel("Teacher LN:");
@@ -119,7 +119,7 @@ public class MyGUI extends JFrame implements ActionListener {
                             txtOutput.setText("Unexpected error occurred!");
                             break;
                         case 1:
-                            txtOutput.setText( String.format("Class %s taught by %s %s with %d credits was successfully added to the database!", className, fn, ln, Integer.parseInt(credits)) );
+                            txtOutput.setText( String.format("Class '%s' taught by '%s %s' with '%d' credits was successfully added to the database!", className, fn, ln, Integer.parseInt(credits)) );
                             break;
                         default:
                             // will NOT execute because of lines before it
