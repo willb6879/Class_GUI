@@ -1,6 +1,6 @@
 # Class Management GUI
 ## Purpose
-THis is a simple Java class Manager that runs a GUI built with swing and a backend database with MySql server. It helps manage classes via input in the GUI and stores data on your localhost.
+This is a simple Java class Manager that runs a GUI built with swing and a backend database with MySql server. It helps manage classes via input in the GUI and stores data on your localhost.
 
 # License
 MIT License
